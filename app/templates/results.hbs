@@ -1,2 +1,12 @@
 <!-- {{outlet}} -->
 <h1>Results Page</h1>
+
+{{#list-filter
+  filter=(action 'filterBySearchWord')
+  as |results|}}
+  <ul class="results">
+    {{#each results as |resultUnit|}}
+      <li>{{search-result result=resultUnit}}</li>
+    {{/each}}
+  </ul>
+{{/list-filter}}
