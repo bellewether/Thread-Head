@@ -1,3 +1,5 @@
 <h1>The Application Page</h1>
-{{model}}
-{{input type=”text” class=”search” placeholder=”Search” value=query action=”queryPost”}}
+{{input type="text" value=query}}
+<button {{action "search" query}}>Search</button>
+{{outlet}}
+<!-- {{model}} -->

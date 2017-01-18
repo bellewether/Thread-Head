@@ -6,5 +6,5 @@ export default DS.Model.extend({
   primary_artist: DS.attr('string'),
   release_date: DS.attr('string'),
   album: DS.attr('string')
-  samples: DS.has_many('sample')
+  // samples: DS.has_many('sample')
 });
