@@ -1,12 +1,17 @@
 <!-- {{outlet}} -->
-<h1>Results</h1>
 
-{{#list-filter
-  filter=(action 'filterBySearchWord')
-  as |results|}}
-  <div class="list-group">
-    {{#each results as |resultUnit|}}
-      {{search-result result=resultUnit}}
-    {{/each}}
-  </div>
-{{/list-filter}}
+<div class="container">
+  <h2>Search</h2>
+  {{#list-filter
+    filter=(action 'filterBySearchWord')
+    as |results|}}
+
+    <!-- <div class="container"> -->
+      <div class="list-group">
+        {{#each results as |resultUnit|}}
+          {{search-result result=resultUnit}}
+        {{/each}}
+      </div>
+    <!-- </div> -->
+    {{/list-filter}}
+</div>
