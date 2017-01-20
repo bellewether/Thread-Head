@@ -8,9 +8,7 @@ export default Ember.Controller.extend({
     filterBySearchWord(param) {
       if (param !== '') {
         return this.get('store').query('result', { q: param });
-      } else {
-        // return this.get('store').findAll('rental');
-      }
+      } 
     }
   }
 

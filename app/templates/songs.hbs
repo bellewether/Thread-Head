@@ -3,7 +3,10 @@
   <h3>{{model.song_title}} </h3>
   <p>Artist: {{model.primary_artist}} </p>
   <p>Album: {{model.album}} </p>
-  <p>Samples: {{samples}}</p>
+  <p>Samples: {{model.samples}}</p>
+  {{#each model.samples as |sample|}}
+    <p>{{sample}}</p>
+  {{/each}}
 </div>
 
 {{arbor-system}}
