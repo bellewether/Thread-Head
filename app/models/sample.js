@@ -4,6 +4,6 @@ export default DS.Model.extend({
   genius_id: DS.attr('number'),
   song_title: DS.attr('string'),
   primary_artist: DS.attr('string'),
-  song_id: DS.attr('number')
-  // song: DS.belongs_to('song')
+  song_id: DS.attr('number'),
+  song: DS.belongsTo('song')
 });
