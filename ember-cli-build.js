@@ -23,8 +23,8 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  app.import('vendor/arbor.js')
-  app.import('vendor/arbor-tween.js')
+  app.import('vendor/arbor.js', { outputFile: 'arbor.js' })
+  app.import('vendor/arbor-tween.js', { outputFile: 'arbor-tween.js' })
   // app.import('vendor/main.js')
 
   return app.toTree();
