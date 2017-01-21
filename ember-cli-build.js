@@ -25,6 +25,8 @@ module.exports = function(defaults) {
 
   app.import('vendor/arbor.js', { outputFile: 'arbor.js' })
   app.import('vendor/arbor-tween.js', { outputFile: 'arbor-tween.js' })
+  // app.import('vendor/arbor-graphics.js', { outputFile: 'arbor-graphics.js' })
+
   // app.import('vendor/main.js')
 
   return app.toTree();

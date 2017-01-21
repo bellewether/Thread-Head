@@ -1,12 +1,13 @@
 <!-- {{outlet}} -->
-<div class="container">
-  <h3>{{model.song_title}} </h3>
-  <p>Artist: {{model.primary_artist}} </p>
-  <p>Album: {{model.album}} </p>
-  <p>Samples: </p>
-  {{#each model.samples as |sample|}}
-    <li>{{sample.song_title}} by {{sample.primary_artist}}</li>
-  {{/each}}
-</div>
-
-{{arbor-system}}
+<article class ="song-info">
+  <div class="container">
+    <h3>{{model.song_title}} </h3>
+    <p>Artist: {{model.primary_artist}} </p>
+    <p>Album: {{model.album}} </p>
+    <p>Samples: </p>
+    {{#each model.samples as |sample|}}
+      <li>{{sample.song_title}} by {{sample.primary_artist}}</li>
+    {{/each}}
+  </div>
+</article>
+{{arbor-system song=model.song_title}}
