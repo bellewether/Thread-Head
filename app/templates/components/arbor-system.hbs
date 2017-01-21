@@ -1,2 +1,7 @@
 <canvas id="viewport" width="1000" height="600"></canvas>
 {{yield}}
+<p>>>>>>>>>>>>>{{current_song.samples}}</p>
+{{#each current_song.samples as |sample|}}
+  <li>{{sample.song_title}} by {{sample.primary_artist}}</li>
+{{/each}}
+<p>>>>>>>>>>>>>{{song.primary_artist}}</p>
