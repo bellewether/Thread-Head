@@ -3,52 +3,36 @@ import Ember from 'ember';
 export default Ember.Component.extend({
     store: Ember.inject.service(),
 
-    // getSamples: function() {
-    //   return this.get('current_song').get('samples');
-    // }.property('current_song.samples')
-    // getSong: function() {
-    //   console.log(">>>>>>>>>>>>>>getting a song");
-    //   return this.get('song').get('song_title');
-    // }.property('song.song_title'),
-      // return this.get('store').findRecord('song', 70324).then(function(result) {
-      //   this.set('song_title', result.song_title);
-      // })
-
     createNodeData: function() {
       console.log(">>>>>>>>>>>>>>getting a song!");
       var current_song = this.get('current_song'); // internal model whatever that means
-      var current_id = current_song.get('id');
+      var current_id = current_song.get('genius_id');
       var current_song_title = current_song.get('song_title');
       var current_primary_artist = current_song.get('primary_artist');
 
       var current_samples = current_song.get('samples');
-      // current_samples.toArray();
-      var second = current_samples.objectAt(1)
 
       console.log("current id is: " + current_id);
       console.log("current song is: " + current_song_title);
-      console.log("current samples are: " + second.get('song_title'));
 
 
-      var nodes = {
-        current_song_title: {},
-      };
+      var nodes = {};
+      nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'black', shape: 'dot' }; //add genius_id for additional calls
 
-      var edges = {
-        current_song_title: {},
-      };
+      var edges = {};
+      edges[current_song_title] = {};
 
       var numSamples = current_samples.get('length');
-      console.log(numSamples);
 
       for(var i=0; i<numSamples; i++) {
-        console.log('Loop cycle' + i);
         var sample = current_samples.objectAt(i);
         var sample_title = sample.get('song_title');
         var primary_artist = sample.get('primary_artist');
+        var id = sample.get('genius_id');
+        var sample_type = sample.get('sample_type');
 
-        nodes[sample_title] = { song_title: sample_title, primary_artist: primary_artist }; //this is working
-        edges.current_song_title[sample_title] = {};
+        nodes[sample_title] = { id: id, song_title: sample_title, primary_artist: primary_artist, sample_type: sample_type }; //add genius_id for additional calls
+        edges[current_song_title][sample_title] = {};
 
       };
 
@@ -56,17 +40,6 @@ export default Ember.Component.extend({
         "nodes": nodes,
         "edges": edges
       };
-
-      // var data = {
-      //   "nodes": {
-      //     current_song_title: {song_title: current_song_title, primary_artist: current_primary_artist},
-      //     "current_song_sample_title_1": {song_title: current_samples.objectAt(0).get('song_title'), primary_artist: current_samples.objectAt(0).get('primary_artist')},
-      //     "current_song_sample_title_2": {song_title: current_samples.objectAt(1).get('song_title'), primary_artist: current_samples.objectAt(1).get('primary_artist')},
-      //   },
-      //   "edges": {
-      //     current_song_title: { "current_song_sample_title_1": {}, "current_song_sample_title_2": {} }
-      //   }
-      // };
 
       return data;
     },
@@ -119,7 +92,7 @@ export default Ember.Component.extend({
 
             // draw a line from pt1 to pt2
             ctx.strokeStyle = "rgba(0,0,0, .333)";
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(pt1.x, pt1.y);
             ctx.lineTo(pt2.x, pt2.y);
@@ -133,25 +106,49 @@ export default Ember.Component.extend({
 
             // determine the box size and round off the coords if we'll be
             // drawing a text label (awful alignment jitter otherwise...)
-            var label = node.data.shape||""
-            var w = ctx.measureText(""+label).width + 10
-            if (!(""+label).match(/^[ \t]*$/)){
-              pt.x = Math.floor(pt.x)
-              pt.y = Math.floor(pt.y)
-            }else{
-              label = null
+            var title = node.data.song_title||""
+            var artist = node.data.primary_artist||""
+
+            // add a conditional to limit the width of the bubbles, split text instead
+            var w = ctx.measureText(""+title).width + 20
+            var l = ctx.measureText(""+artist).width + 20
+            if (w > l) {
+              if (!(""+title).match(/^[ \t]*$/)){
+                pt.x = Math.floor(pt.x)
+                pt.y = Math.floor(pt.y)
+              } else {
+                title = null
+              }
+            } else {
+              if (!(""+artist).match(/^[ \t]*$/)){
+                pt.x = Math.floor(pt.x)
+                pt.y = Math.floor(pt.y)
+              } else {
+                artist = null
+              }
             }
+
             // draw a rectangle centered at pt
+            // console.log(node.data.color);
             // if (node.data.color) ctx.fillStyle = node.data.color
             // else ctx.fillStyle = "rgba(0,0,0,.2)"
             // if (node.data.color=='none') ctx.fillStyle = "white"
+            //
+            ctx.fillStyle = (node.data.sample_type) ? "red" : "black";
 
-            var w = 100;
-            ctx.fillStyle = (node.data.sample_type) ? "orange" : "black";
-            ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w);
-
+            // ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w);
             // if (node.data.label=='dot'){
-            // gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:ctx.fillStyle})
+            // if (node.data.label=='dot'){
+            if (node.data.color) {
+              gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:node.data.color})
+            } else if (node.data.sample_type == "parent" || node.data.sample_type == "cover"){
+              gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"orange"})
+            } else if (node.data.sample_type == "child") {
+              gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"purple"})
+            } else {
+              gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"pink"})
+            }
+            // if (node.data.label=='dot'){
             // ctx.fillStyle = "white"
             // ctx.fillText(node.data.song_title||"", pt.x, pt.y+4)
             // nodeBoxes[node.name] = [pt.x-w/2, pt.y-w/2, w,w]
@@ -160,22 +157,23 @@ export default Ember.Component.extend({
             // nodeBoxes[node.name] = [pt.x-w/2, pt.y-11, w, 22]
             // }
 
-            if (node.data.shape=='dot'){
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:ctx.fillStyle})
-            nodeBoxes[node.name] = [pt.x-w/2, pt.y-w/2, w,w]
-            }else{
-            gfx.rect(pt.x-w/2, pt.y-10, w,20, 4, {fill:ctx.fillStyle})
-            nodeBoxes[node.name] = [pt.x-w/2, pt.y-11, w, 22]
-            }
+            // if (node.data.shape=='dot'){
+            // gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:ctx.fillStyle})
+            // nodeBoxes[node.name] = [pt.x-w/2, pt.y-w/2, w,w]
+            // }else{
+            // gfx.rect(pt.x-w/2, pt.y-10, w,20, 4, {fill:ctx.fillStyle})
+            // nodeBoxes[node.name] = [pt.x-w/2, pt.y-11, w, 22]
+            // }
 
             // draw the text
             if (node.data.song_title){
-            ctx.font = "16px Helvetica"
+            ctx.font = "15px Titillium Web"
             ctx.textAlign = "center"
             ctx.fillStyle = "white"
             if (node.data.color=='none') ctx.fillStyle = '#333333'
-            ctx.fillText(node.data.song_title||"", pt.x, pt.y-8)
-            ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+8)
+            ctx.fillText(node.data.song_title||"", pt.x, pt.y-16)
+            ctx.fillText("by", pt.x, pt.y)
+            ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+16)
             }
           });
         },
