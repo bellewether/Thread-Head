@@ -18,32 +18,31 @@ export default Ember.Component.extend({
       //get the current song's id
       //use that id to findRecord in the store
       console.log(">>>>>>>>>>>>>>getting a song!");
+
       var current_song = this.get('current_song'); // internal model whatever that means
       var current_id = current_song.get('id');
       var current_song_title = current_song.get('song_title');
-
+      var current_primary_artist = current_song.get('primary_artist');
 
       var current_samples = current_song.get('samples');
+      // current_samples.toArray();
+      var second = current_samples.objectAt(1)
+
       console.log("current id is: " + current_id);
       console.log("current song is: " + current_song_title);
-      console.log("current samples are: " + current_samples);
+      console.log("current samples are: " + second.get('song_title'));
 
-      for (var i=0; i<current_samples.length; i++) {
-        console.log(current_samples[i]);
-      }
-
-      // var data = {
-      //   "nodes": {
-      //     current_song_title: {},
-      //     current_song_sample_title: {},
-      //     current_song_sample_title: {}
-      //   },
-      //   "edges": {
-      //     current_song_title: { current_song_sample_title: {}, current_song_sample_title: {} }
-      //   }
-      // };
-      // return data;
-      // return this.get('store').findRecord('song', current_id); // don't really need this (findRecord), but may need it to find a sample's samples later
+      var data = {
+        "nodes": {
+          current_song_title: {song_title: current_song_title, primary_artist: current_primary_artist},
+          "current_song_sample_title_1": {song_title: current_samples.objectAt(0).get('song_title'), primary_artist: current_samples.objectAt(0).get('primary_artist')},
+          "current_song_sample_title_2": {song_title: current_samples.objectAt(1).get('song_title'), primary_artist: current_samples.objectAt(1).get('primary_artist')},
+        },
+        "edges": {
+          current_song_title: { "current_song_sample_title_1": {}, "current_song_sample_title_2": {} }
+        }
+      };
+      return data;
     },
 
     Renderer: function(canvas){
@@ -150,7 +149,6 @@ export default Ember.Component.extend({
             ctx.fillStyle = "white"
             if (node.data.color=='none') ctx.fillStyle = '#333333'
             ctx.fillText(node.data.song_title||"", pt.x, pt.y-8)
-            // ctx.fillText(kanye_song||"", pt.x, pt.y-8)
             ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+8)
             }
           });
@@ -245,23 +243,22 @@ export default Ember.Component.extend({
     sys.renderer = this.Renderer("#viewport"); // our newly created renderer will have its .init() method called shortly by sys...
 
     // add some nodes to the graph and watch it go...
-    var data = {
-      "nodes": {
-        "song": {mass:.5, fixed:true, x:500, y:100, song_title: "Thinkin Bout You", primary_artist: "Frank Ocean", samples: 5, 'shape': "dot"},
-        "sample1": {mass:1.5, song_title: "What You Want", primary_artist: "Logic", sample_type: false, 'shape': "dot"},
-        "sample2": {mass:1.5, song_title: "Drive By", primary_artist: "Eric Bellinger", sample_type: false, 'shape': "dot"},
-        "sample3": {mass:1, song_title: "Thinking About Forever", primary_artist: "Bridget Kelly", sample_type: true}
-
-      },
-      "edges": {
-        "song": {"sample1":{}, "sample2":{}, "sample3":{}}
-      }
-    };
+    // var data = {
+    //   "nodes": {
+    //     "song": {mass:.5, fixed:true, x:500, y:100, song_title: "Thinkin Bout You", primary_artist: "Frank Ocean", samples: 5, 'shape': "dot"},
+    //     "sample1": {mass:1.5, song_title: "What You Want", primary_artist: "Logic", sample_type: false, 'shape': "dot"},
+    //     "sample2": {mass:1.5, song_title: "Drive By", primary_artist: "Eric Bellinger", sample_type: false, 'shape': "dot"},
+    //     "sample3": {mass:1, song_title: "Thinking About Forever", primary_artist: "Bridget Kelly", sample_type: true}
+    //
+    //   },
+    //   "edges": {
+    //     "song": {"sample1":{}, "sample2":{}, "sample3":{}}
+    //   }
+    // };
 
     //call a function that returns a data hash object of nodes and edges
     //then call sys.graft(whatever the previous function returns)
-    var cs = this.createNodeData();
-    console.log(cs);
+    var data = this.createNodeData();
 
     sys.graft(data);
 
