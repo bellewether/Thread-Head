@@ -15,10 +15,7 @@ export default Ember.Component.extend({
       // })
 
     createNodeData: function() {
-      //get the current song's id
-      //use that id to findRecord in the store
       console.log(">>>>>>>>>>>>>>getting a song!");
-
       var current_song = this.get('current_song'); // internal model whatever that means
       var current_id = current_song.get('id');
       var current_song_title = current_song.get('song_title');
@@ -32,16 +29,45 @@ export default Ember.Component.extend({
       console.log("current song is: " + current_song_title);
       console.log("current samples are: " + second.get('song_title'));
 
-      var data = {
-        "nodes": {
-          current_song_title: {song_title: current_song_title, primary_artist: current_primary_artist},
-          "current_song_sample_title_1": {song_title: current_samples.objectAt(0).get('song_title'), primary_artist: current_samples.objectAt(0).get('primary_artist')},
-          "current_song_sample_title_2": {song_title: current_samples.objectAt(1).get('song_title'), primary_artist: current_samples.objectAt(1).get('primary_artist')},
-        },
-        "edges": {
-          current_song_title: { "current_song_sample_title_1": {}, "current_song_sample_title_2": {} }
-        }
+
+      var nodes = {
+        current_song_title: {},
       };
+
+      var edges = {
+        current_song_title: {},
+      };
+
+      var numSamples = current_samples.get('length');
+      console.log(numSamples);
+
+      for(var i=0; i<numSamples; i++) {
+        console.log('Loop cycle' + i);
+        var sample = current_samples.objectAt(i);
+        var sample_title = sample.get('song_title');
+        var primary_artist = sample.get('primary_artist');
+
+        nodes[sample_title] = { song_title: sample_title, primary_artist: primary_artist }; //this is working
+        edges.current_song_title[sample_title] = {};
+
+      };
+
+      var data = {
+        "nodes": nodes,
+        "edges": edges
+      };
+
+      // var data = {
+      //   "nodes": {
+      //     current_song_title: {song_title: current_song_title, primary_artist: current_primary_artist},
+      //     "current_song_sample_title_1": {song_title: current_samples.objectAt(0).get('song_title'), primary_artist: current_samples.objectAt(0).get('primary_artist')},
+      //     "current_song_sample_title_2": {song_title: current_samples.objectAt(1).get('song_title'), primary_artist: current_samples.objectAt(1).get('primary_artist')},
+      //   },
+      //   "edges": {
+      //     current_song_title: { "current_song_sample_title_1": {}, "current_song_sample_title_2": {} }
+      //   }
+      // };
+
       return data;
     },
 
@@ -259,7 +285,7 @@ export default Ember.Component.extend({
     //call a function that returns a data hash object of nodes and edges
     //then call sys.graft(whatever the previous function returns)
     var data = this.createNodeData();
-
+    console.log(data);
     sys.graft(data);
 
   }
