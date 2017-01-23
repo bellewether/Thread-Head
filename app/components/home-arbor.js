@@ -92,25 +92,30 @@ export default Ember.Component.extend({
       initMouseHandling:function(){
         // no-nonsense drag and drop (thanks springy.js)
         var dragged = null;
+        var selected = null;
+        var nearest = null;
 
         // set up a handler object that will initially listen for mousedowns then
         // for moves and mouseups while dragging
         var handler = {
           clicked: function(e){
+
             var pos = $(canvas).offset();
-            var _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
-            dragged = particleSystem.nearest(_mouseP);
+            var _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top)
+            var nearest = particleSystem.nearest(_mouseP);
 
-            if (dragged && dragged.node !== null){
-              // while we're dragging, don't let physics move the node
-              dragged.node.fixed = true;
+            if (nearest && nearest.node !== null) {
+              var link = nearest.node.data.link
+              if (link.match(/^#/)) {
+                $(that).trigger({
+                  type: "navigate",
+                  path: link.substr(1)
+                })
+              } else {
+                window.location = link
+              }
+              return false
             }
-            console.log("clicked!");
-            console.log(dragged);
-            // $(canvas).bind('mousemove', handler.dragged);
-            // $(window).bind('mouseup', handler.dropped);
-
-            return false;
           }//,
           // dragged:function(e){
           //   var pos = $(canvas).offset();
@@ -133,9 +138,9 @@ export default Ember.Component.extend({
           //   $(window).unbind('mouseup', handler.dropped);
           //   var _mouseP = null;
           //   return false;
-          // }
-          // when you get back to this, it should be here inside the handler, adjust
-          // initMouseOver: function(e) {
+          // },
+          //
+          // mouseover: function(e) {
           //   console.log("I hovered over this node");
           //
           //   var hover = null;
@@ -153,12 +158,11 @@ export default Ember.Component.extend({
           //     }
           //
           //   }
-          //   // start listening
-          //   $(canvas).mouseover(handler.mouseover);
           // }
         };
         // start listening
         $(canvas).mousedown(handler.clicked);
+        //   $(canvas).mouseover(handler.mouseover);
       }
 
     };
@@ -172,10 +176,10 @@ export default Ember.Component.extend({
 
     var data = {
       "nodes": {
-        "thread-head": { label: "Thread Head", color: "purple" },
-        "about": { label: "about" },
+        "thread-head": { label: "Thread Head", shape: "dot", color: "purple" },
+        "about": { label: "about", shape: "dot", link: "about" },
         "sign-in": { label: "sign in" },
-        "search": { label: "search", link: "https://localhost:4200/results" }
+        "search": { label: "search", shape: "dot", link: "results" }
       },
       "edges": {
         "thread-head": { "about": {}, "sign-in": {}, "search": {} }
