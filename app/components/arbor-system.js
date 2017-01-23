@@ -109,7 +109,7 @@ export default Ember.Component.extend({
             var title = node.data.song_title||""
             var artist = node.data.primary_artist||""
 
-            // add a conditional to limit the width of the bubbles, split text instead
+            // TODO: add a conditional to limit the width of the bubbles, split text instead
             var w = ctx.measureText(""+title).width + 20
             var l = ctx.measureText(""+artist).width + 20
             if (w > l) {

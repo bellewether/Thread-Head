@@ -1,7 +1,6 @@
 import Ember from 'ember';
 
-export default Ember.Route.extend({
-
+export default Ember.Controller.extend({
   actions: {
     transitiontoResults: function() {
       console.log("transitiontoResults from the router was called!")

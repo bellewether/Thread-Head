@@ -1,6 +1,11 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  actions: {
+    transition: function() {
+      this.get('resultsLink')();
+    }
+  },
 
   Renderer: function(canvas){
     canvas = $(canvas).get(0);
@@ -56,58 +61,30 @@ export default Ember.Component.extend({
 
           // determine the box size and round off the coords if we'll be
           // drawing a text label (awful alignment jitter otherwise...)
-          var title = node.data.song_title||""
-          var artist = node.data.primary_artist||""
+          var label = node.data.label||""
 
-          // add a conditional to limit the width of the bubbles, split text instead
-          var w = ctx.measureText(""+title).width + 20
-          var l = ctx.measureText(""+artist).width + 20
-          if (w > l) {
-            if (!(""+title).match(/^[ \t]*$/)){
-              pt.x = Math.floor(pt.x)
-              pt.y = Math.floor(pt.y)
-            } else {
-              title = null
-            }
+          var w = ctx.measureText(""+label).width + 10
+          if (!(""+label).match(/^[ \t]*$/)){
+            pt.x = Math.floor(pt.x)
+            pt.y = Math.floor(pt.y)
           } else {
-            if (!(""+artist).match(/^[ \t]*$/)){
-              pt.x = Math.floor(pt.x)
-              pt.y = Math.floor(pt.y)
-            } else {
-              artist = null
-            }
+            label = null
           }
 
-          // draw a rectangle centered at pt
-          // console.log(node.data.color);
-          // if (node.data.color) ctx.fillStyle = node.data.color
-          // else ctx.fillStyle = "rgba(0,0,0,.2)"
-          // if (node.data.color=='none') ctx.fillStyle = "white"
-          //
-          ctx.fillStyle = (node.data.sample_type) ? "red" : "black";
 
-          // ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w);
-          // if (node.data.label=='dot'){
-          // if (node.data.label=='dot'){
           if (node.data.color) {
             gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:node.data.color})
-          } else if (node.data.sample_type == "parent" || node.data.sample_type == "cover"){
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"orange"})
-          } else if (node.data.sample_type == "child") {
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"purple"})
           } else {
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"pink"})
+            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"grey"})
           }
 
           // draw the text
-          if (node.data.song_title){
-          ctx.font = "15px Titillium Web"
-          ctx.textAlign = "center"
-          ctx.fillStyle = "white"
-          if (node.data.color=='none') ctx.fillStyle = '#333333'
-          ctx.fillText(node.data.song_title||"", pt.x, pt.y-16)
-          ctx.fillText("by", pt.x, pt.y)
-          ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+16)
+          if (node.data.label){
+            ctx.font = "13px Titillium Web"
+            ctx.textAlign = "center"
+            ctx.fillStyle = "white"
+            if (node.data.color=='none') ctx.fillStyle = '#333333'
+            ctx.fillText(node.data.label||"", pt.x, pt.y+3)
           }
         });
       },
@@ -128,62 +105,62 @@ export default Ember.Component.extend({
               // while we're dragging, don't let physics move the node
               dragged.node.fixed = true;
             }
-
-            $(canvas).bind('mousemove', handler.dragged);
-            $(window).bind('mouseup', handler.dropped);
-
-            return false;
-          },
-          dragged:function(e){
-            var pos = $(canvas).offset();
-            var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
-
-            if (dragged && dragged.node !== null){
-              var p = particleSystem.fromScreen(s);
-              dragged.node.p = p;
-            }
+            console.log("clicked!");
+            console.log(dragged);
+            // $(canvas).bind('mousemove', handler.dragged);
+            // $(window).bind('mouseup', handler.dropped);
 
             return false;
-          },
-
-          dropped:function(e){
-            if (dragged===null || dragged.node===undefined) return
-            if (dragged.node !== null) dragged.node.fixed = false
-            dragged.node.tempMass = 1000;
-            dragged = null;
-            $(canvas).unbind('mousemove', handler.dragged);
-            $(window).unbind('mouseup', handler.dropped);
-            var _mouseP = null;
-            return false;
-          }
+          }//,
+          // dragged:function(e){
+          //   var pos = $(canvas).offset();
+          //   var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
+          //
+          //   if (dragged && dragged.node !== null){
+          //     var p = particleSystem.fromScreen(s);
+          //     dragged.node.p = p;
+          //   }
+          //
+          //   return false;
+          // },
+          //
+          // dropped:function(e){
+          //   if (dragged===null || dragged.node===undefined) return
+          //   if (dragged.node !== null) dragged.node.fixed = false
+          //   dragged.node.tempMass = 1000;
+          //   dragged = null;
+          //   $(canvas).unbind('mousemove', handler.dragged);
+          //   $(window).unbind('mouseup', handler.dropped);
+          //   var _mouseP = null;
+          //   return false;
+          // }
+          // when you get back to this, it should be here inside the handler, adjust
+          // initMouseOver: function(e) {
+          //   console.log("I hovered over this node");
+          //
+          //   var hover = null;
+          //
+          //   var handler = {
+          //     mouseover:function(e){
+          //       var pos = $(canvas).offset();
+          //       var _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
+          //       hover = particleSystem.nearest(_mouseP);
+          //
+          //       if (hover && hover.node !== null){
+          //         dragged.node.fixed = true;
+          //         console.log("I hovered over this node");
+          //       }
+          //     }
+          //
+          //   }
+          //   // start listening
+          //   $(canvas).mouseover(handler.mouseover);
+          // }
         };
-
         // start listening
         $(canvas).mousedown(handler.clicked);
-
       }
 
-      // initMouseOver: function(e) {
-      //   console.log("I hovered over this node");
-      //
-      //   var hover = null;
-      //
-      //   var handler = {
-      //     mouseover:function(e){
-      //       var pos = $(canvas).offset();
-      //       var _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
-      //       hover = particleSystem.nearest(_mouseP);
-      //
-      //       if (hover && hover.node !== null){
-      //         dragged.node.fixed = true;
-      //         console.log("I hovered over this node");
-      //       }
-      //     }
-      //
-      //   }
-      //   // start listening
-      //   $(canvas).mouseover(handler.mouseover);
-      // }
     };
     return that;
   },
@@ -193,19 +170,17 @@ export default Ember.Component.extend({
     sys.parameters({gravity:true}); // use center-gravity to make the graph settle nicely
     sys.renderer = this.Renderer("#viewport");
 
-    // add some nodes to the graph and watch it go...
     var data = {
       "nodes": {
-        "thread-head": { label: "Thread Head" },
+        "thread-head": { label: "Thread Head", color: "purple" },
         "about": { label: "about" },
         "sign-in": { label: "sign in" },
-        "search": { label: "search" }
+        "search": { label: "search", link: "https://localhost:4200/results" }
       },
       "edges": {
         "thread-head": { "about": {}, "sign-in": {}, "search": {} }
       }
     };
-
     sys.graft(data);
 
   }
