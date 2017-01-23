@@ -1,5 +1,8 @@
 @import 'bootstrap';
 
+body {
+  background-color: lavender;
+}
 /*.song-info{
   display: inline-block;
   float: left;

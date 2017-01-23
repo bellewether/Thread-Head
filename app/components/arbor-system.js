@@ -12,12 +12,8 @@ export default Ember.Component.extend({
 
       var current_samples = current_song.get('samples');
 
-      console.log("current id is: " + current_id);
-      console.log("current song is: " + current_song_title);
-
-
       var nodes = {};
-      nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'black', shape: 'dot' }; //add genius_id for additional calls
+      nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'gray', shape: 'dot' }; //add genius_id for additional calls
 
       var edges = {};
       edges[current_song_title] = {};
@@ -49,8 +45,6 @@ export default Ember.Component.extend({
       var ctx = canvas.getContext("2d");
       var gfx = arbor.Graphics(canvas)
       var particleSystem;
-      // var kanye_song = this.get('store').get('song');
-      // console.log(">>>>>>>>>>>>>" + kanye_song);
 
       var that = {
         init: function(system){
@@ -82,7 +76,7 @@ export default Ember.Component.extend({
           // which allow you to step through the actual node objects but also pass an
           // x,y point in the screen's coordinate system
           //
-          ctx.fillStyle = "gray";
+          ctx.fillStyle = "lavender";
           ctx.fillRect(0,0, canvas.width, canvas.height);
 
           particleSystem.eachEdge(function(edge, pt1, pt2){
@@ -134,7 +128,6 @@ export default Ember.Component.extend({
             // else ctx.fillStyle = "rgba(0,0,0,.2)"
             // if (node.data.color=='none') ctx.fillStyle = "white"
             //
-            ctx.fillStyle = (node.data.sample_type) ? "red" : "black";
 
             // ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w);
             // if (node.data.label=='dot'){
@@ -167,7 +160,7 @@ export default Ember.Component.extend({
 
             // draw the text
             if (node.data.song_title){
-            ctx.font = "15px Titillium Web"
+            ctx.font = "12px Titillium Web"
             ctx.textAlign = "center"
             ctx.fillStyle = "white"
             if (node.data.color=='none') ctx.fillStyle = '#333333'

@@ -1,12 +1,6 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  actions: {
-    transition: function() {
-      this.get('resultsLink')();
-    }
-  },
-
   Renderer: function(canvas){
     canvas = $(canvas).get(0);
     var ctx = canvas.getContext("2d");
@@ -37,7 +31,7 @@ export default Ember.Component.extend({
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         //
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "lavender";
         ctx.fillRect(0,0, canvas.width, canvas.height);
 
         particleSystem.eachEdge(function(edge, pt1, pt2){
@@ -185,6 +179,7 @@ export default Ember.Component.extend({
         "thread-head": { "about": {}, "sign-in": {}, "search": {} }
       }
     };
+
     sys.graft(data);
 
   }
