@@ -100,14 +100,14 @@ export default Ember.Component.extend({
 
             if (nearest && nearest.node !== null) {
               var link = nearest.node.data.link
-              if (link.match(/^#/)) {
-                $(that).trigger({
-                  type: "navigate",
-                  path: link.substr(1)
-                })
-              } else {
+              // if (link.match(/^#/)) {
+              //   $(that).trigger({
+              //     type: "navigate"
+              //     // path: link.substr(1)
+              //   })
+              // } else {
                 window.location = link
-              }
+              // }
               return false
             }
           }//,

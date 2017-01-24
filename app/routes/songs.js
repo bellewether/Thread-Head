@@ -14,12 +14,20 @@ export default Ember.Route.extend({
   //   })
   // },
   //
-  // setupController(controller, hash) {
-  //       controller.set('song', hash.song)
-  //       controller.set('samples', hash.samples)
-  // },
 
   // afterModel: function(model) {
-  //   return model.get('samples');
+  //   var sample_song_hash = {}
+  //   var samples = model.get('samples');
+  //   for(var i=0; i<samples.get('length'); i++) {
+  //     var sample = samples.objectAt(i);
+  //     var sample_id = sample.get('genius_id');
+  //     var sample_song = this.store.findRecord('song', sample_id);
+  //
+  //     sample_song_hash[sample_id] = { sample_song };
+  //
+  //   };
+  //   return sample_song_hash.then(function(result){
+  //     self.set('authors', result);
+  //   ;
   // }
 });
