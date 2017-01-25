@@ -40,7 +40,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.host = "http://threaded2-env.3zzzmfsc4t.us-west-2.elasticbeanstalk.com"
   }
 
   return ENV;
