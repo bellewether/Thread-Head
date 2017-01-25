@@ -10,10 +10,11 @@ export default Ember.Route.extend({
   //
   //   return Ember.RSVP.hash({
   //     song: song,
-  //     samples: song.then(samples => song.get('samples'))
+  //     samples: song.then(samples => song.get('samples')),
+  //     ss: song.then(ss => song.get('ss'))
   //   })
-  // },
-  //
+  // }
+
 
   // afterModel: function(model) {
   //   var sample_song_hash = {}

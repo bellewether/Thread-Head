@@ -170,7 +170,7 @@ export default Ember.Component.extend({
 
     var data = {
       "nodes": {
-        "thread-head": { label: "Thread Head", shape: "dot", color: "purple" },
+        "thread-head": { label: "Thread Head", shape: "dot", color: "#560082" },
         "about": { label: "about", shape: "dot", link: "about" },
         "sign-in": { label: "sign in" },
         "search": { label: "search", shape: "dot", link: "results" }

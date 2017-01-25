@@ -5,7 +5,6 @@ export default DS.Model.extend({
   song_title: DS.attr('string'),
   primary_artist: DS.attr('string'),
   sample_type: DS.attr('string'),
-  release_date: DS.attri('string'),
   song_id: DS.attr('number'),
   song: DS.belongsTo('song')
 });

@@ -3,20 +3,21 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
 
-  createAdditionalNodeData: function() {
-    // var current_song_samples = this.get('store').query('songs', )
-    var current_song_samples = this.get('current_song');
-    console.log(">>>>>>>>>>>>"+current_song_samples);
-  },
-
   createNodeData: function() {
     //what if each sample's samples were created as nodes here and hidden?
     var current_song = this.get('current_song'); // internal model whatever that means
-    var current_id = current_song.get('genius_id');
+    console.log(current_song);
+    var current_id = current_song.get('song');
     var current_song_title = current_song.get('song_title');
     var current_primary_artist = current_song.get('primary_artist');
 
     var current_samples = current_song.get('samples');
+    // come back to this if you have time!
+    // var sample = current_samples.objectAt(0);
+    // var id = sample.get('genius_id');
+    // var ss = this.get('store').findRecord('song', id);
+    // console.log(">>>>>>>"+ss);
+
 
     var nodes = {};
     nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'gray', shape: 'dot' }; //add genius_id for additional calls
@@ -111,33 +112,40 @@ export default Ember.Component.extend({
           var artist = node.data.primary_artist||""
 
           // TODO: add a conditional to limit the width of the bubbles, split text instead
-          var w = ctx.measureText(""+title).width + 20
-          var l = ctx.measureText(""+artist).width + 20
-          if (w > l) {
-            if (!(""+title).match(/^[ \t]*$/)){
+          var title_length = ctx.measureText(""+title).width + 20
+          var artist_length = ctx.measureText(""+artist).width + 20
+          var length = null;
+          if (title_length > artist_length) {
+            // if (!(""+title).match(/^[ \t]*$/)){
               pt.x = Math.floor(pt.x)
               pt.y = Math.floor(pt.y)
-            } else {
-              title = null
-            }
+              length = title_length;
+            // } else {
+            //   title = null
+            // }
           } else {
-            if (!(""+artist).match(/^[ \t]*$/)){
+            // if (!(""+artist).match(/^[ \t]*$/)){
               pt.x = Math.floor(pt.x)
               pt.y = Math.floor(pt.y)
-            } else {
-              artist = null
-            }
+              length = artist_length;
+            // } else {
+            //   artist = null
+            // }
+          }
+
+          if (length <= 60) {
+            length = length + 20;
           }
 
           // draw a circle centered at pt
           if (node.data.color) {
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:node.data.color})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:node.data.color})
           } else if (node.data.sample_type == "parent" || node.data.sample_type == "cover"){
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"orange"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"orange"})
           } else if (node.data.sample_type == "child") {
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"purple"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#560082"})
           } else {
-            gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:"pink"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"pink"})
           }
 
           // draw the text
@@ -146,7 +154,7 @@ export default Ember.Component.extend({
             ctx.textAlign = "center"
             ctx.fillStyle = "white"
             if (node.data.color=='none') ctx.fillStyle = '#333333'
-            ctx.fillText(node.data.song_title||"", pt.x, pt.y-16)
+            ctx.fillText(node.data.song_title||"", pt.x, pt.y-15)
             ctx.fillText("by", pt.x, pt.y)
             ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+16)
           }
@@ -159,92 +167,109 @@ export default Ember.Component.extend({
         var nearest = null;
         var _mouseP = null;
         var selected = null;
+        var mouse_is_down = false;
+        var mouse_is_moving = false;
+        // var mouse_is_up = true;
+
         // set up a handler object that will initially listen for mousedowns then
         // for moves and mouseups while dragging
         var handler = {
-          clicked: function(e){
 
+          clicked: function(e){
             var pos = $(canvas).offset();
             _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top)
             dragged = nearest = selected = particleSystem.nearest(_mouseP);
 
-            //since the node data is available here, maybe we just create the data obj here...
-            //but what would we do with it afterwards?
-            console.log(nearest.node);
-            console.log(nearest.node.data.id);
-
-            $(canvas).bind('mouseup', handler.expand)
-            // if (nearest && nearest.node !== null) {
-            //   $(that).trigger("expand", { id: nearest.node.data.id })
-            // }
-            // return false;
-          },
-
-          // clicked:function(e){
-          //   var pos = $(canvas).offset();
-          //   _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
-          //   selected = nearest = dragged = particleSystem.nearest(_mouseP);
-          //   if (dragged.node !== null) dragged.node.fixed = true
-          //   $(canvas).bind('mousemove', handler.dragged)
-          //   $(window).bind('mouseup', handler.dropped)
-          // },
-          expand:function(e){
-            // if (dragged===null || dragged.node===undefined) return
-            if (nearest.node !== null){
-              nearest.node.fixed = false
-              var id=nearest.node.data.id;
-              console.log('Node selected: ' + id);
+            if (nearest && nearest.node !== null && nearest.distance < 50) {
+              if (nearest.node.data.link) {
+                var link = nearest.node.data.link
+                window.location = link
+              }
             }
 
-            // var clicked_sample = this.store.findRecord('song', id);
-            // var clicked_sample = this.get('store').query('song', id);
-            // console.log(clicked_sample);
+            $(canvas).unbind('mousemove', handler.mousemove);
+            $(canvas).bind('mousemove', handler.dragged);
+            $(canvas).bind('mouseup', handler.dropped);
+
+            return false;
+          },
+
+          mousemove: function(e) {
+            if(!mouse_is_down){
+              var pos = $(canvas).offset();
+              _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
+              nearest = particleSystem.nearest(_mouseP);
+
+              if (!nearest.node) return false
+              selected = (nearest.distance < 50) ? nearest : null
+              if(selected && selected.node.data.link){
+                $(canvas).addClass('linkable')
+              } else {
+                $(canvas).removeClass('linkable')
+              }
+            }
             return false
           },
 
-          // clicked: function(e){
-          //   var pos = $(canvas).offset();
-          //   var _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
-          //   dragged = particleSystem.nearest(_mouseP);
-          //
-          //   if (dragged && dragged.node !== null){
-          //     // while we're dragging, don't let physics move the node
-          //     dragged.node.fixed = true;
-          //   }
-          //
-          //   $(canvas).bind('mousemove', handler.dragged);
-          //   $(window).bind('mouseup', handler.dropped);
-          //
-          //   return false;
-          //
-          //
-          // }//,
-          // dragged:function(e){
-          //   var pos = $(canvas).offset();
-          //   var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
-          //
-          //   if (dragged && dragged.node !== null){
-          //     var p = particleSystem.fromScreen(s);
-          //     dragged.node.p = p;
-          //   }
-          //
-          //   return false;
-          // },
-          //
-          // dropped:function(e){
-          //   if (dragged===null || dragged.node===undefined) return
-          //   if (dragged.node !== null) dragged.node.fixed = false
-          //   dragged.node.tempMass = 1000;
-          //   dragged = null;
-          //   $(canvas).unbind('mousemove', handler.dragged);
-          //   $(window).unbind('mouseup', handler.dropped);
-          //   var _mouseP = null;
-          //   return false;
-          // }
+          mousedown: function(e){
+            var pos = $(canvas).offset();
+            var _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
+            selected = nearest = dragged = particleSystem.nearest(_mouseP);
+
+            if (dragged.node !== null){
+              // while we're dragging, don't let physics move the node
+              dragged.node.fixed = true;
+            }
+
+            mouse_is_down = true;
+            mouse_is_moving = false;
+
+            $(canvas).bind('mousemove', handler.dragged);
+            $(canvas).bind('mouseup', handler.dropped);
+
+            return false;
+          },
+
+          dragged:function(e){
+
+            var pos = $(canvas).offset();
+            var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
+
+            if (!nearest) return
+            if (dragged !==null && dragged.node !== null){
+              var p = particleSystem.fromScreen(s);
+              dragged.node.p = p;
+              mouse_is_moving = true;
+            }
+            return false;
+          },
+
+          dropped:function(e){
+            if (dragged===null || dragged.node===undefined) return
+            if (dragged.node !== null) dragged.node.fixed = false
+            dragged.node.tempMass = 1000;
+            dragged = null;
+            selected = null;
+            $(canvas).unbind('mousemove', handler.dragged);
+            $(window).unbind('mouseup', handler.dropped);
+            $(canvas).bind('mousemove', handler.mousemove);
+            _mouseP = null;
+
+            if (mouse_is_moving) {
+              console.log("was_dragged")
+            } else {
+              handler.clicked(e)
+            }
+
+            mouse_is_down = false
+            return false;
+          },
         };
 
         // start listening
         $(canvas).mousedown(handler.clicked);
+        $(canvas).mousemove(handler.mousemove);
+        $(canvas).mouseup(handler.dropped);
 
       }
     };
@@ -262,6 +287,5 @@ export default Ember.Component.extend({
     var data = this.createNodeData();
     console.log(data);
     sys.graft(data);
-    var something = this.createAdditionalNodeData();
   }
 });
