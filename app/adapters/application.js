@@ -1,5 +1,6 @@
 // app/adapters/application.js
 import ActiveModelAdapter from 'active-model-adapter';
+import config from '../config/environment';
 
 export default ActiveModelAdapter.extend(
   {
