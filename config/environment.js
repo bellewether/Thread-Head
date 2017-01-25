@@ -13,6 +13,10 @@ module.exports = function(environment) {
       }
     },
 
+    contentSecurityPolicy: {
+      'connect-src': ["'self'", "http://threaded2-env.3zzzmfsc4t.us-west-2.elasticbeanstalk.com"]
+    },
+
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
