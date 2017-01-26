@@ -22,7 +22,7 @@ export default Ember.Component.extend({
 
 
     var nodes = {};
-    nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: '#4d4a4a', shape: 'dot', font_size: "bold 14px Titillium Web" }; //add genius_id for additional calls
+    nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'gray', shape: 'dot', font_size: "bold 14px Titillium Web" }; //add genius_id for additional calls
 
     var edges = {};
     edges[current_song_title] = {};
@@ -85,7 +85,7 @@ export default Ember.Component.extend({
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         //
-        ctx.fillStyle = "#240d30";
+        ctx.fillStyle = "#0d0411";
         ctx.fillRect(0,0, canvas.width, canvas.height);
 
         particleSystem.eachEdge(function(edge, pt1, pt2){
@@ -95,7 +95,7 @@ export default Ember.Component.extend({
 
           // draw a line from pt1 to pt2
           ctx.strokeStyle = "rgba(187, 184, 184, 1)";
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.25;
           ctx.beginPath();
           ctx.moveTo(pt1.x, pt1.y);
           ctx.lineTo(pt2.x, pt2.y);
@@ -142,9 +142,9 @@ export default Ember.Component.extend({
           if (node.data.color) {
             gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:node.data.color})
           } else if (node.data.sample_type == "parent" || node.data.sample_type == "cover"){
-            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#322f34"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#af4a01"})
           } else if (node.data.sample_type == "child") {
-            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#a4a4a4"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#592494"})
             // gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:""})
 
           } else {
@@ -154,18 +154,19 @@ export default Ember.Component.extend({
           // draw the text
           if (node.data.song_title){
             if (node.data.font_size) {
-              ctx.font = node.data.font_size
+              ctx.font = "bold 14px Titillium Web"
               ctx.textAlign = "center"
               ctx.fillStyle = "black"
             } else {
-              ctx.font = "bold 12px Titillium Web"
+              ctx.font = "bold 14px Titillium Web"
               ctx.textAlign = "center"
-              ctx.fillStyle = "black"
+              ctx.fillStyle = "white"
             }
-            if (node.data.color=='none') ctx.fillStyle = '#333333'
+            // if (node.data.color=='none') ctx.fillStyle = '#333333'
             ctx.fillText(node.data.song_title||"", pt.x, pt.y-15)
             ctx.fillText("by", pt.x, pt.y)
             ctx.fillText(node.data.primary_artist||"", pt.x, pt.y+16)
+            // ctx.fillText(node.data.sample_type + " sample", pt.x, pt.y+25)
           }
         });
       },

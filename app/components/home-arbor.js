@@ -74,7 +74,7 @@ export default Ember.Component.extend({
 
           // draw the text
           if (node.data.label){
-            ctx.font = "13px Titillium Web"
+            ctx.font = "bold 14px Titillium Web"
             ctx.textAlign = "center"
             ctx.fillStyle = "white"
             if (node.data.color=='none') ctx.fillStyle = '#333333'
