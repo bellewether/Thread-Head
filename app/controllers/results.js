@@ -7,12 +7,6 @@ export default Ember.Controller.extend({
         return this.get('store').query('result', { q: param });
       }
     }
-
-    // search(param) {
-    //   if ()
-    // }
   }
-
-
 
 });

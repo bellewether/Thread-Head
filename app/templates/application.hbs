@@ -1,7 +1,10 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
 
-    {{#list-filter id="search" class="navbar-form navbar-left"
+    <form method="get" action="results" class="navbar-form navbar-right" id="search-dark">
+      <input name="q" type="text" size="40" placeholder="Search..." />
+    </form>
+    <!-- {{#list-filter class="navbar-form navbar-left"
       filter=(action 'filterBySearchWord')
       as |results|}}
 
@@ -10,21 +13,20 @@
           {{search-result result=resultUnit}}
         {{/each}}
       </div>
-    {{/list-filter}}
+    {{/list-filter}} -->
 
     <div class="navbar-header">
       <a class="navbar-title" href="">Thread Head</a>
-      <p class="navbar-description">A visualization tool for music samples</p>
+      <!-- <p class="navbar-description">A visualization tool for music samples</p> -->
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">About</a></li>
+        <li><a href="about">About</a></li>
         <li><a href="#">Sign In</a></li>
       </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+    </div>
+  </div>
 </nav>
 
 {{outlet}}

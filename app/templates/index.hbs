@@ -1,2 +1,12 @@
 {{outlet}}
+{{#list-filter id="search" class="navbar-form navbar-left"
+  filter=(action 'filterBySearchWord')
+  as |results|}}
+
+  <div class="list-group">
+    {{#each results as |resultUnit|}}
+      {{search-result result=resultUnit}}
+    {{/each}}
+  </div>
+{{/list-filter}}
 {{home-arbor}}

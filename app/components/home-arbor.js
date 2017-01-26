@@ -31,7 +31,7 @@ export default Ember.Component.extend({
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         //
-        ctx.fillStyle = "lavender";
+        ctx.fillStyle = "#0d0411";
         ctx.fillRect(0,0, canvas.width, canvas.height);
 
         particleSystem.eachEdge(function(edge, pt1, pt2){
@@ -40,7 +40,7 @@ export default Ember.Component.extend({
           // pt2:  {x:#, y:#}  target position in screen coords
 
           // draw a line from pt1 to pt2
-          ctx.strokeStyle = "rgba(0,0,0, .333)";
+          ctx.strokeStyle = "rgba(181, 178, 178, 0.6)";
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(pt1.x, pt1.y);
@@ -166,14 +166,14 @@ export default Ember.Component.extend({
   didInsertElement() {
     var sys = arbor.ParticleSystem(1000, 600, 0.5); // create the system with sensible repulsion/stiffness/friction
     sys.parameters({gravity:true}); // use center-gravity to make the graph settle nicely
-    sys.renderer = this.Renderer("#viewport");
+    sys.renderer = this.Renderer("#home-viewport");
 
     var data = {
       "nodes": {
         "thread-head": { label: "Thread Head", shape: "dot", color: "#560082" },
         "about": { label: "about", shape: "dot", link: "about" },
         "sign-in": { label: "sign in" },
-        "search": { label: "search", shape: "dot", link: "results" }
+        "search": { label: "search", shape: "dot", link: "search" }
       },
       "edges": {
         "thread-head": { "about": {}, "sign-in": {}, "search": {} }

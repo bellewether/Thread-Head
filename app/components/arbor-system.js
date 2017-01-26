@@ -5,22 +5,24 @@ export default Ember.Component.extend({
 
   createNodeData: function() {
     //what if each sample's samples were created as nodes here and hidden?
-    var current_song = this.get('current_song'); // internal model whatever that means
-    console.log(current_song);
+    var current_song = this.get('current_song');
+    console.log("this is the current song model" + current_song);
     var current_id = current_song.get('song');
     var current_song_title = current_song.get('song_title');
     var current_primary_artist = current_song.get('primary_artist');
 
     var current_samples = current_song.get('samples');
+
+    //create SS nodes...
     // come back to this if you have time!
     // var sample = current_samples.objectAt(0);
     // var id = sample.get('genius_id');
-    // var ss = this.get('store').findRecord('song', id);
-    // console.log(">>>>>>>"+ss);
+    // var ss = this.get('store').findRecord('song', id).then(function() { console.log(ss.get('song_title')); });
+    // console.log("What?"+ss);
 
 
     var nodes = {};
-    nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: 'gray', shape: 'dot' }; //add genius_id for additional calls
+    nodes[current_song_title] = { id: current_id, song_title: current_song_title, primary_artist: current_primary_artist, color: '#4d4a4a', shape: 'dot', font_size: "bold 14px Titillium Web" }; //add genius_id for additional calls
 
     var edges = {};
     edges[current_song_title] = {};
@@ -34,9 +36,8 @@ export default Ember.Component.extend({
       var id = sample.get('genius_id');
       var sample_type = sample.get('sample_type');
 
-      nodes[sample_title] = { id: id, song_title: sample_title, primary_artist: primary_artist, sample_type: sample_type }; //add genius_id for additional calls
+      nodes[sample_title] = { id: id, song_title: sample_title, primary_artist: primary_artist, sample_type: sample_type, link: 'songs/' + id }; //add genius_id for additional calls
       edges[current_song_title][sample_title] = {};
-
     };
 
     var data = {
@@ -84,7 +85,7 @@ export default Ember.Component.extend({
         // which allow you to step through the actual node objects but also pass an
         // x,y point in the screen's coordinate system
         //
-        ctx.fillStyle = "lavender";
+        ctx.fillStyle = "#240d30";
         ctx.fillRect(0,0, canvas.width, canvas.height);
 
         particleSystem.eachEdge(function(edge, pt1, pt2){
@@ -93,7 +94,7 @@ export default Ember.Component.extend({
           // pt2:  {x:#, y:#}  target position in screen coords
 
           // draw a line from pt1 to pt2
-          ctx.strokeStyle = "rgba(0,0,0, .333)";
+          ctx.strokeStyle = "rgba(187, 184, 184, 1)";
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(pt1.x, pt1.y);
@@ -141,18 +142,26 @@ export default Ember.Component.extend({
           if (node.data.color) {
             gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:node.data.color})
           } else if (node.data.sample_type == "parent" || node.data.sample_type == "cover"){
-            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"orange"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#322f34"})
           } else if (node.data.sample_type == "child") {
-            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#560082"})
+            gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"#a4a4a4"})
+            // gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:""})
+
           } else {
             gfx.oval(pt.x-length/2, pt.y-length/2, length,length, {fill:"pink"})
           }
 
           // draw the text
           if (node.data.song_title){
-            ctx.font = "12px Titillium Web"
-            ctx.textAlign = "center"
-            ctx.fillStyle = "white"
+            if (node.data.font_size) {
+              ctx.font = node.data.font_size
+              ctx.textAlign = "center"
+              ctx.fillStyle = "black"
+            } else {
+              ctx.font = "bold 12px Titillium Web"
+              ctx.textAlign = "center"
+              ctx.fillStyle = "black"
+            }
             if (node.data.color=='none') ctx.fillStyle = '#333333'
             ctx.fillText(node.data.song_title||"", pt.x, pt.y-15)
             ctx.fillText("by", pt.x, pt.y)
@@ -186,7 +195,6 @@ export default Ember.Component.extend({
                 window.location = link
               }
             }
-
             $(canvas).unbind('mousemove', handler.mousemove);
             $(canvas).bind('mousemove', handler.dragged);
             $(canvas).bind('mouseup', handler.dropped);
@@ -285,7 +293,7 @@ export default Ember.Component.extend({
     //call a function that returns a data hash object of nodes and edges
     //then call sys.graft(with whatever the previous function returns)
     var data = this.createNodeData();
-    console.log(data);
     sys.graft(data);
+
   }
 });

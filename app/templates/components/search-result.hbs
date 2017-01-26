@@ -1,6 +1,5 @@
 {{yield}}
-
-{{#link-to 'songs' result.id class="list-group-item"}}
-  <p class="list-group-item-heading">{{result.title}}</p>
+{{#link-to 'songs' result.id class="list-item"}}
+  <strong><p class="list-group-item-heading">{{result.title}}</p></strong>
   <p class="list-group-item-text">{{result.primary_artist}}</p>
 {{/link-to}}
